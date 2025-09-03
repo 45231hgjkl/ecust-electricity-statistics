@@ -14,7 +14,7 @@ def sendMsgToWechat(token: str, title: str, text: str, template: str) -> None:
     default channel is wechat
     """
     url = "http://www.pushplus.plus/send"
-    data = {"token": token, "title": title, "content": text, "template": template}
+    data = {"token": token, "title": title, "content": text, "template": template,"topic": room709}
     try:
         requests.post(
             url=url, data=(json.dumps(data).encode(encoding="utf-8")), timeout=20
