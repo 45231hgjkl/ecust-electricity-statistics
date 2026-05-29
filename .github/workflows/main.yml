@@ -1,5 +1,8 @@
 name: AutoRecord
 on:
+  push:
+    paths-ignore:
+      - "data.js"  # 避免 workflow 自身提交触发无限循环
   workflow_dispatch:
   schedule:
     - cron: "30 00 * * *"
@@ -20,10 +23,6 @@ jobs:
       - name: Run
         env:
           URL: ${{ secrets.URL }}
-          PUSH_PLUS_TOKEN: ${{ secrets.PUSH_PLUS_TOKEN }}
-          GITHUB_TRIGGERING_ACTOR: ${{ github.triggering_actor }}
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_USER_IDS: ${{ secrets.TELEGRAM_USER_IDS }}
         run: |
           python main.py
       - name: git config
@@ -34,6 +33,7 @@ jobs:
         run: |-
           git diff
           git add -A
+          git add -f data.js  # 强制添加 data.js，绕过 .gitignore
           git status
           git commit -m "update by github actions"
           git push
