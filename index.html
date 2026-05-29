@@ -347,8 +347,15 @@
       });
       plot.render();
 
-      // responsive resize
-      window.addEventListener('resize', function () { plot.destroy(); plot.render(); });
+      // responsive resize (debounced to avoid mobile scroll glitch)
+      var resizeTimer;
+      window.addEventListener('resize', function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function () {
+          plot.destroy();
+          plot.render();
+        }, 200);
+      });
     }
   })();
   </script>

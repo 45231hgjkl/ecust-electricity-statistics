@@ -23,6 +23,8 @@ URL = os.environ.get("URL", "").strip()
 config = tomllib.loads(Path("config.toml").read_text(encoding="utf-8"))
 logging.basicConfig(level=logging.INFO)
 
+TZ = datetime.timezone(datetime.timedelta(hours=8))  # UTC+8
+
 
 def once(func: Callable[..., Any]) -> Callable[..., Any]:
     """Runs a function only once."""
@@ -38,7 +40,7 @@ def once(func: Callable[..., Any]) -> Callable[..., Any]:
 
 @once
 def get_date() -> str:
-    return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return datetime.datetime.now(TZ).strftime("%Y-%m-%d %H:%M:%S")
 
 
 # main
