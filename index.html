@@ -229,14 +229,14 @@
   <script>
   (function () {
     // ----- helpers -----
-    function parseDate(s) {
-      // supports "2025-01-16" and "2025-01-16 00:30:05"
-      const d = new Date(s.replace(' ', 'T'));
-      return isNaN(d.getTime()) ? null : d;
+    function dateStr(s) {
+      // "2026-05-27" or "2026-05-29 07:42:09" → "2026-05-27"
+      return s.slice(0, 10);
     }
-    function dateKey(d) {
-      // YYYY-MM-DD key
-      return d.toISOString().slice(0, 10);
+    function parseDate(s) {
+      // always parse as local midnight to avoid UTC/local mismatch
+      var parts = s.slice(0, 10).split('-');
+      return new Date(+parts[0], +parts[1] - 1, +parts[2]);
     }
     function fmtNum(n, digits) {
       if (digits === undefined) digits = 1;
@@ -298,7 +298,7 @@
     for (var i = 1; i < sorted.length; i++) {
       var use = sorted[i - 1].kWh - sorted[i].kWh;
       dailyUsages.push({
-        date: dateKey(parseDate(sorted[i].time)),
+        date: dateStr(sorted[i].time),
         usage: parseFloat(Math.max(0, use).toFixed(2))
       });
     }
