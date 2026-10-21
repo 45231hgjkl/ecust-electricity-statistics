@@ -234,6 +234,7 @@ summary:focus-visible,
   color: inherit;
   border-radius: var(--radius-lg);
   min-width: 0;
+  overflow: hidden;
 }
 /* 图标微交互：group-hover:text-white + hover:bg-blue-500 + hover:scale-110 */
 .brand-icon {
@@ -257,7 +258,7 @@ summary:focus-visible,
 }
 .brand-icon svg { width: 1.25rem; height: 1.25rem; }
 
-.brand-text { display: flex; flex-direction: column; min-width: 0; }
+.brand-text { display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
 .brand-title {
   font-size: 1.125rem;
   font-weight: 600;
@@ -265,6 +266,8 @@ summary:focus-visible,
   color: var(--text);
   line-height: 1.35;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .brand-sub {
   font-size: .75rem;
@@ -302,8 +305,17 @@ summary:focus-visible,
 }
 .status.is-stale .status-dot { background: var(--warning); }
 @media (max-width: 639px) {
-  .status { font-size: .75rem; padding: .25rem .375rem; }
+  .nav-inner { gap: .5rem; padding: .625rem 1rem; }
+  .brand { gap: .5rem; }
+  .brand-title { font-size: 1rem; }
+  .brand-icon { width: 2.25rem; height: 2.25rem; }
+  .status { font-size: .6875rem; padding: .25rem .375rem; gap: .25rem; }
   .btn-label { display: none; }
+  .btn-square { padding: .4375rem; }
+}
+/* 极窄屏（≤359px）：优先保留数据新鲜度状态，让仓库入口退让 */
+@media (max-width: 359px) {
+  .nav-actions .btn-secondary:not(.btn-square) { display: none; }
 }
 
 /* ================================================================
@@ -426,7 +438,7 @@ summary:focus-visible,
 .page-desc {
   font-size: .9375rem;
   color: var(--text-body);
-  max-width: 68ch;
+  max-width: 40rem;
 }
 
 /* ================================================================
@@ -871,7 +883,7 @@ body.is-empty .dashboard { display: none; }
 .footer-tagline {
   font-size: .75rem;
   color: var(--text-muted);
-  max-width: 42ch;
+  max-width: 36rem;
 }
 .footer-meta { font-size: .75rem; color: var(--text-muted); }
 
@@ -934,7 +946,7 @@ body.is-empty .dashboard { display: none; }
 <main class="container">
   <header class="page-head">
     <h1 class="page-title">宿舍电量概览</h1>
-    <p class="page-desc">每日自动记录宿舍剩余电量，统计当日用电、充值情况与可用天数，帮助你提前规划电费充值。</p>
+    <p class="page-desc">每日自动采集宿舍剩余电量与用电情况，估算可用天数，便于提前规划充值。</p>
   </header>
 
   <!-- 空状态 -->
