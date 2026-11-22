@@ -54,7 +54,7 @@ Settings - Pages - Deploy from a branch - 选中 main - Save
 页面特点：
 
 - **单文件、零外部依赖**：不加载任何 CDN 资源，断网、内网也能正常显示
-- **企业简洁风（Corporate Clean）**：白卡片 + slate-50 背景 + blue-600 主色，浅色为基准，可切换深色主题
+- **shadcn/ui 设计语言**：语义 token（background/foreground/muted/border/ring）、`rounded-xl` 卡片 + `shadow-sm`、近黑 primary、blue 图表色板；`html.dark` 切换深色
 - 概览：剩余电量、较前一日变化、近 7 天日均用电、按日均值估算的可用天数
 - 趋势图：每日用电 / 剩余电量两种视图，支持 7 / 30 / 90 天与全部区间，悬停查看明细
 - 明细表与 CSV 导出
