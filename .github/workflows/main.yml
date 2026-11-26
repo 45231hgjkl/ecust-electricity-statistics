@@ -23,6 +23,7 @@ jobs:
       - name: Run
         env:
           URL: ${{ secrets.URL }}
+          PUSH_PLUS_TOKEN: ${{ secrets.PUSH_PLUS_TOKEN }}
         run: |
           python main.py
       - name: git config

@@ -1,6 +1,6 @@
 # ecust-electricity-statistics
 
-华东理工大学电费统计：拒绝一切不透明操作。通过 Github Actions 自动获取并记录每天的宿舍电量剩余，并通过 PushPlus/Telegram 自动推送/告急。
+华东理工大学电费统计：拒绝一切不透明操作。通过 Github Actions 自动获取并记录每天的宿舍电量剩余，并在电量低于阈值时通过 PushPlus（新消息ClawBot）自动推送告急。
 
 ## 开始记录
 
@@ -70,29 +70,22 @@ Settings - Pages - Deploy from a branch - 选中 main - Save
 
 如果你需要自定义推送选项，请编辑 `config.toml` 文件，详情见文件注释。
 
-![20231017-1744](https://github.com/lxl66566/ecust-electricity-statistics/assets/88281489/ef1b0a26-4f77-4c5c-8281-cac1f3d2d3cd)
+|   参数    | 默认值 |
+| :-------: | :----: |
+| `warning` |   20   |
 
-|       参数        | 默认值 |
-| :---------------: | :----: |
-|   days_to_show    |   10   |
-|      detail       |  true  |
-|      warning      |   10   |
-| push_warning_only |  true  |
+- `warning`：电量预警阈值（kWh）。每天检测到剩余电量低于该值时，通过 PushPlus 推送一次提醒；设为 `0` 则不推送。
+- 该阈值同时用于网页中的预警线高亮（`index.html` 的 `WARN_KWH`），修改时请保持一致。
 
-请注意由于 `push_warning_only`，默认情况下不会推送每日数据。
+然后，按你的需要配置以下推送方式：
 
-然后，你需要选择以下两个推送方式的至少一个：
+### PushPlus（新消息ClawBot）
 
-### Telegram
+1. 在 [PushPlus 官网](https://www.pushplus.plus) 个人中心 - 渠道配置中绑定「新消息ClawBot」渠道（需中国移动号码）。
+2. _Settings - Secrets and variables - Actions - New repository secret_
+3. Name 填写 `PUSH_PLUS_TOKEN`，Secret 填写你的 PushPlus 用户 token。
 
-1. Settings - Secrets and variables - Actions - New repository secret
-2. Name 填写 `TELEGRAM_BOT_TOKEN`，Secret 填写你的 Telegram Bot Token 信息
-3. Name 填写 `TELEGRAM_USER_IDS`，Secret 填写你的 Telegram chat ID 信息，表示 bot 需要发送消息的会话。多个 User ID 以空格分隔。
-
-### PushPlus
-
-1. Settings - Secrets and variables - Actions - New repository secret
-2. Name 填写 `PUSH_PLUS_TOKEN`，Secret 填写你的 PushPlus 的 TOKEN 信息
+配置后，每天检测到剩余电量低于 `warning` 阈值时，会通过该渠道推送一条告急消息；推送失败只记录日志，不影响电量数据记录。
 
 ## 注意事项
 

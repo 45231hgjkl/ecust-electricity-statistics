@@ -19,6 +19,8 @@ class ItemType(TypedDict):
 # DEBUG：开启调试模式，将信息输出至 stdout
 DEBUG = os.environ.get("DEBUG", os.environ.get("debug", "")).strip()
 URL = os.environ.get("URL", "").strip()
+# PushPlus 用户 token，在 GitHub Secrets 中配置
+PUSH_PLUS_TOKEN = os.environ.get("PUSH_PLUS_TOKEN", "").strip()
 
 config = tomllib.loads(Path("config.toml").read_text(encoding="utf-8"))
 logging.basicConfig(level=logging.INFO)
@@ -41,6 +43,44 @@ def once(func: Callable[..., Any]) -> Callable[..., Any]:
 @once
 def get_date() -> str:
     return datetime.datetime.now(TZ).strftime("%Y-%m-%d %H:%M:%S")
+
+
+def push_warning(remain: float) -> None:
+    """电量低于 config.toml 的 warning 阈值时，通过 PushPlus 新消息ClawBot 推送一次。"""
+    threshold: float = config.get("warning", 20)
+    if threshold <= 0 or remain >= threshold:
+        logging.info(f"剩余电量 {remain} 不低于阈值 {threshold}，跳过推送")
+        return
+    if not PUSH_PLUS_TOKEN:
+        logging.info("PUSH_PLUS_TOKEN 未配置，跳过推送")
+        return
+
+    content = (
+        f"当前剩余电量：{remain:.1f} kWh\n"
+        f"预警阈值：{threshold:.1f} kWh\n"
+        f"检测时间：{get_date()}\n\n"
+        "请及时充值，避免断电。"
+    )
+    try:
+        resp = requests.post(
+            "https://www.pushplus.plus/send",
+            json={
+                "token": PUSH_PLUS_TOKEN,
+                "title": "华理宿舍电量告急",
+                "content": content,
+                "channel": "cmcc",
+                "template": "txt",
+            },
+            timeout=10,
+        )
+        resp.raise_for_status()
+        result = resp.json()
+        if result.get("code") == 200:
+            logging.info(f"PushPlus 推送成功，流水号：{result.get('data')}")
+        else:
+            logging.error(f"PushPlus 推送失败：{result}")
+    except (requests.RequestException, ValueError) as e:
+        logging.exception(f"PushPlus 推送异常：{e}")
 
 
 # main
@@ -99,3 +139,6 @@ if not DEBUG:
     logging.info("write back to data.js")
 else:
     logging.info(f"DEBUG mode - 剩余电量: {remain}, 记录总数: {len(data)}")
+
+# push notification
+push_warning(remain)
